@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "repository": "git@github.com:sakurayang/socket-chat-backend.git",
+  "author": "sakurayang <1304274443@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "NODE_ENV=development yarn run src/app.js",
+    "start": "NODE_ENV=production yarn run src/app.js",
+    "lint": "prettier"
+  },
+  "dependencies": {
+    "log4js": "^6.4.5",
+    "lowdb": "^3.0.0",
+    "nanoid": "^3.0",
+    "querystring2json": "^1.1.2",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "prettier": "^2.6.2"
+  }
+}
