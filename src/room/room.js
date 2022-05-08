@@ -6,13 +6,13 @@ import { room }  from "../utils/db.js";
  * @param {string} id
  * @return {boolean}
  */
-const idExist = (data, id) => !isNaN(+ data.findIndex(v => v.id === id));
+const idExist = (data, id) => data.findIndex(v => v.id === id) >= 0;
 
 /**
  * @param {import("../utils/struct.d.ts").Room[]} data
  * @param {string} name
  */
-const nameExist = (data, name) => !isNaN(+ data.findIndex(v => v.name === name));
+const nameExist = (data, name) => data.findIndex(v => v.name === name) >= 0;
 
 /**
  *
@@ -59,6 +59,7 @@ export async function remove(id) {
     }
     data.splice(index, 1);
     room.data.rooms = data;
+    await room.write();
     return true;
 }
 
