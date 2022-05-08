@@ -18,7 +18,11 @@ vim src/config.js
 node src/app.js
 ```
 
-## API
+## 路由接口
+
+### Socket 路径
+
+`/ws`
 
 ### 参数概述
 
