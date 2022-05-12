@@ -14,3 +14,10 @@ export type Status = {
     // room count
     rooms: number
 };
+
+export type Message = {
+    room: string,
+    user: string,
+    message: string,
+    time: number
+}
