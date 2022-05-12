@@ -516,11 +516,6 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-querystring2json@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/querystring2json/-/querystring2json-1.1.2.tgz#ceb3efc63636664d605e63ef219168d3c2ea30bc"
-  integrity sha512-Fiawh6PC8d1Bo1APP426VIYbOkkFfT2xbzvrZzTwOO/arvlqlks69ZRhGf9Bco89SSll4rOGPf+MaUzYZavSUQ==
-
 regexpp@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"

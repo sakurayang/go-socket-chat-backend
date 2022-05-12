@@ -12,11 +12,11 @@ const getQueryParams = (params, url) => {
 
 /**
  *
- * @param {import("uWebSockets.js/index").HttpRequest} req
- * @param {import("uWebSockets.js/index").HttpResponse} res
+ * @param {Req} req
+ * @param {Res} res
  */
 export async function getRoomList(res, req) {
-    let data = {rooms: []}
+    let data = [];
     res.onAborted(() => {
         res.aborted = true;
     });
@@ -27,15 +27,15 @@ export async function getRoomList(res, req) {
     }).finally(e => {
         res.writeStatus("200 OK");
         res.writeHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(data));
+        res.end(JSON.stringify({rooms: data}));
     })
 
 }
 
 /**
  *
- * @param {import("uWebSockets.js/index").HttpRequest} req
- * @param {import("uWebSockets.js/index").HttpResponse} res
+ * @param {Req} req
+ * @param {Res} res
  */
 export async function getStatus(res, req) {
     res.onAborted(() => {
@@ -46,33 +46,34 @@ export async function getStatus(res, req) {
     res.cork(()=>{
         res.writeStatus("200 OK")
             .writeHeader("Content-Type", "application/json")
-            .end(JSON.stringify(data));
+            .end(JSON.stringify({status: data}));
     });
 }
 
 /**
  *
- * @param {import("uWebSockets.js/index").HttpRequest} req
- * @param {import("uWebSockets.js/index").HttpResponse} res
+ * @param {Req} req
+ * @param {Res} res
  */
 export async function delRoom(res, req) {
     res.onAborted(() => {
         res.aborted = true;
     });
     let id = req.getParameter(0);
+    await db.room.read();
     let result = await room.remove(id);
     if (result !== true) {
         res.writeStatus("503 Error " + result?.message || " ");
     } else {
         res.writeStatus("200 OK");
     }
-    res.end(JSON.stringify({...db.room.data, err: result?.message}) || JSON.stringify(db.room.data));
+    res.end(JSON.stringify({rooms: db.room.data, err: result?.message}) || JSON.stringify({rooms: db.room.data}));
 }
 
 /**
  *
- * @param {import("uWebSockets.js/index").HttpRequest} req
- * @param {import("uWebSockets.js/index").HttpResponse} res
+ * @param {Req} req
+ * @param {Res} res
  */
 export async function createRoom(res, req) {
     res.onAborted(() => {
@@ -82,11 +83,12 @@ export async function createRoom(res, req) {
     let parent_query = "?" + req.getQuery();
     let p = getQueryParams("parent", parent_query);
     let p_id = p || "";
+    await db.room.read();
     let result = await room.create(id, p_id);
     if (result !== true) {
         res.writeStatus("503 Error " + result?.message || " ");
     } else {
         res.writeStatus("200 OK");
     }
-    res.end(JSON.stringify({...db.room.data, err: result?.message}) || JSON.stringify(db.room.data));
+    res.end(JSON.stringify({rooms: db.room.data, err: result?.message}) || JSON.stringify({rooms: db.room.data}));
 }

@@ -17,7 +17,7 @@ ij_wrap_on_typing = false
 
 [{*.cjs,*.js}]
 # ij_continuation_indent_size = 4
-ij_javascript_align_imports = true
+ij_javascript_align_imports = false
 ij_javascript_align_multiline_array_initializer_expression = true
 # ij_javascript_align_multiline_binary_operation = false
 # ij_javascript_align_multiline_chained_methods = false
@@ -63,8 +63,8 @@ ij_javascript_block_brace_style = end_of_line
 # ij_javascript_for_statement_new_line_after_left_paren = false
 # ij_javascript_for_statement_right_paren_on_new_line = false
 # ij_javascript_for_statement_wrap = off
-# ij_javascript_force_quote_style = false
-# ij_javascript_force_semicolon_style = false
+ij_javascript_force_quote_style = true
+ij_javascript_force_semicolon_style = false
 # ij_javascript_function_expression_brace_style = end_of_line
 # ij_javascript_if_brace_force = never
 # ij_javascript_import_merge_members = global

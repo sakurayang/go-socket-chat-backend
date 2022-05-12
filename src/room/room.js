@@ -2,14 +2,14 @@ import { nanoid } from "nanoid";
 import { room }  from "../utils/db.js";
 
 /**
- * @param {import("../utils/struct.d.ts").Room[]} data
+ * @param {Room[]} data
  * @param {string} id
  * @return {boolean}
  */
 const idExist = (data, id) => data.findIndex(v => v.id === id) >= 0;
 
 /**
- * @param {import("../utils/struct.d.ts").Room[]} data
+ * @param {Room[]} data
  * @param {string} name
  */
 const nameExist = (data, name) => data.findIndex(v => v.name === name) >= 0;
@@ -22,20 +22,20 @@ const nameExist = (data, name) => data.findIndex(v => v.name === name) >= 0;
  */
 export async function create(name, parent = "") {
     await room.read();
-    /** @type {import("../utils/struct.d.ts").Room[]} */
-    let data = room.data.rooms;
+    /** @type {Room[]} */
+    let data = room.data;
     if (nameExist(data, name)) {return new Error("name duplicate")}
     let id = nanoid(10);
     /** @type {string[]} */
     let sub = [];
-    /** @type {import("../utils/struct.d.ts").Room} */
+    /** @type {Room} */
     let info = { id, name, sub, parent};
 
     if (parent !== "") {
         if (!idExist(data, parent)) { return new Error("parent id not exist") }
         await addSub(parent, id);
     }
-    room.data.rooms.push(info);
+    room.data.push(info);
     await room.write();
     return true;
 }
@@ -47,8 +47,8 @@ export async function create(name, parent = "") {
  */
 export async function remove(id) {
     await room.read();
-    /** @type {import("../utils/struct.d.ts").Room[]} */
-    let data = room.data.rooms;
+    /** @type {Room[]} */
+    let data = room.data;
     if (!idExist(data, id)) { return new Error("id not exist") }
     let index = data.findIndex(v => v.id === id);
     if (data[index].sub.length !== 0 ) {
@@ -58,7 +58,7 @@ export async function remove(id) {
         }
     }
     data.splice(index, 1);
-    room.data.rooms = data;
+    room.data= data;
     await room.write();
     return true;
 }
@@ -71,12 +71,12 @@ export async function remove(id) {
  */
 export async function addSub(id, sub_id) {
     await room.read();
-    /** @type {import("../utils/struct.d.ts").Room[]} */
-    let data = room.data.rooms;
+    /** @type {Room[]} */
+    let data = room.data;
     let index = data.findIndex(v => v.id === id);
     if (isNaN(+index)) { return new Error("id not found") }
-    if (room.data.rooms[index].parent !== "") { return new Error("can not create sub") }
-    room.data.rooms[index].sub.push(sub_id);
+    if (room.data[index].parent !== "") { return new Error("can not create sub") }
+    room.data[index].sub.push(sub_id);
     await room.write();
     return true;
 }
@@ -89,8 +89,8 @@ export async function addSub(id, sub_id) {
  */
 export async function delSub(id, sub_id) {
     await room.read();
-    /** @type {import("../utils/struct.d.ts").Room[]} */
-    let data = room.data.rooms;
+    /** @type {Room[]} */
+    let data = room.data;
     let index = data.findIndex(v => v.id === id);
     if (isNaN(+index)) { return new Error("id not found") }
 
@@ -99,7 +99,7 @@ export async function delSub(id, sub_id) {
     data[index].sub.splice(sub_index_in_parent, 1);
     data.splice(sub_index, 1);
 
-    room.data.rooms = data;
+    room.data = data;
     await room.write();
     return true;
 }
