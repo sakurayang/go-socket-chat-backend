@@ -5,7 +5,11 @@ import {heart, init, status, user} from "./utils/db.js";
 import * as middleware from "./http/middlewares.js";
 import {handler} from "./socket/pubsub.js";
 
-const logger = Log("core");
+import {Worker} from "worker_threads";
+import * as path from "path";
+
+
+const logger = console;
 
 (async () => await init())();
 
@@ -57,9 +61,13 @@ app.ws("/ws", {
     open:    (ws) => {
 
         logger.log("A WebSocket connected!");
+        ws.send("hello");
     },
-    message: async (ws, message) => {
-        await handler(message, ws);
+    message: (ws, message) => {
+        //logger.log(ws, message);
+        handler(message, ws);
+        //const worker = new Worker(path.join("./", "socket/pubsub.js"));
+        //worker.on("online")
     },
     drain:   (ws) => {
         logger.log("WebSocket backpressure: " + ws.getBufferedAmount());

@@ -1,4 +1,7 @@
 import {user, room, status, heart} from "../utils/db.js";
+import Log from "../utils/logger.js";
+
+const logger = Log("socket");
 
 /**
  *
@@ -14,6 +17,7 @@ const room_exist = (id, data) => data.findIndex(v => v.id === id) >= 0 ;
  * @param {WS} ws
  */
 export async function handler(msg, ws) {
+
     const dec = new TextDecoder();
     /** @type {Message} */
     let m = JSON.parse(dec.decode(new Uint8Array(msg)));
@@ -160,7 +164,12 @@ async function boardcast(msg, room_id, ws) {
     if (room_id in u_data) {
         let r = u_data[room_id];
         for (const u of r) {
-            u.ws.send(JSON.stringify(msg))
+            try {
+                u.ws.readyState === 1 && u.ws.send(JSON.stringify(msg))
+            } catch (e) {
+                logger.error(e);
+            }
+
         }
     } else {
         await room.read();
