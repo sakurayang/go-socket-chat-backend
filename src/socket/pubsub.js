@@ -1,4 +1,5 @@
 import {user, room, status, heart} from "../utils/db.js";
+// import { Worker, workerData } from "worker_threads";
 import Log from "../utils/logger.js";
 
 const logger = Log("socket");
@@ -17,7 +18,7 @@ const room_exist = (id, data) => data.findIndex(v => v.id === id) >= 0 ;
  * @param {WS} ws
  */
 export async function handler(msg, ws) {
-
+    //console.log(workerData);
     const dec = new TextDecoder();
     /** @type {Message} */
     let m = JSON.parse(dec.decode(new Uint8Array(msg)));
@@ -45,19 +46,13 @@ export async function handler(msg, ws) {
 }
 
 /**
- * message parser
- *
- */
-async function parser() {}
-
-/**
  * handle client pub
  * @param {Message} msg,
  * @param {WS} ws
  */
 async function pub(msg, ws) {
-    let {room} = msg;
-    await boardcast(JSON.stringify(msg), room, ws)
+    let {room, name} = msg;
+    await boardcast(name, JSON.stringify(msg), room, ws)
 }
 
 /**
@@ -97,7 +92,7 @@ async function sub(msg, ws) {
  * @param {WS} ws
  * @return {Promise<void>}
  */
-export async function unsub(msg, ws) {
+async function unsub(msg, ws) {
     await user.read();
     await room.read();
     /** @type {User} */
@@ -153,11 +148,12 @@ async function heart_beat(msg, ws) {
 
 /**
  * boardcast
+ * @param {string} name
  * @param {string} msg,
  * @param {string} room_id,
  * @param {WS} ws
  */
-async function boardcast(msg, room_id, ws) {
+async function boardcast(name, msg, room_id, ws) {
     await user.read();
     /** @type {User} */
     let u_data = user.data;
@@ -165,7 +161,7 @@ async function boardcast(msg, room_id, ws) {
         let r = u_data[room_id];
         for (const u of r) {
             try {
-                u.ws.readyState === 1 && u.ws.send(JSON.stringify(msg))
+                /*u.ws.readyState === 1 && */ u.ws.send(JSON.stringify(msg));
             } catch (e) {
                 logger.error(e);
             }
@@ -178,16 +174,16 @@ async function boardcast(msg, room_id, ws) {
         if (room_exist(room_id, r_data)) {
             ws.send(JSON.stringify({err: "room not exist"}));
         } else {
-            u_data[room_id].push(ws);
+            u_data[room_id].push({name, ws});
             await user.write();
             for (const u of u_data[room_id]) {
-                u.ws.send(JSON.stringify(msg))
+                u.ws.send(JSON.stringify(msg));
             }
         }
     }
 }
 
-export async function server_boardcast(msg) {
+async function server_boardcast(msg) {
     await user.read();
     /** @type {User} */
     let u_data = user.data;

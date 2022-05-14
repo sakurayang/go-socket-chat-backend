@@ -5,11 +5,7 @@ import {heart, init, status, user} from "./utils/db.js";
 import * as middleware from "./http/middlewares.js";
 import {handler} from "./socket/pubsub.js";
 
-import {Worker} from "worker_threads";
-import * as path from "path";
-
-
-const logger = console;
+const logger = Log("core");
 
 (async () => await init())();
 
@@ -60,29 +56,28 @@ app.ws("/ws", {
     /* Handlers */
     open:    (ws) => {
 
-        logger.log("A WebSocket connected!");
+        logger.info("A WebSocket connected!");
         ws.send("hello");
     },
     message: (ws, message) => {
-        //logger.log(ws, message);
+        logger.debug(message);
         handler(message, ws);
-        //const worker = new Worker(path.join("./", "socket/pubsub.js"));
-        //worker.on("online")
     },
     drain:   (ws) => {
-        logger.log("WebSocket backpressure: " + ws.getBufferedAmount());
+        logger.info("WebSocket backpressure: " + ws.getBufferedAmount());
     },
     close:   (ws, code, message) => {
-        logger.log("WebSocket closed");
+        logger.info("WebSocket closed");
     }
 }).get("/status", middleware.getStatus)
     .get("/room", middleware.getRoomList)
     .del("/room/:id", middleware.delRoom)
     .put("/room/:id", middleware.createRoom)
+    .post("/file", middleware.fileUpload)
     .listen(config.port, token => {
         if (token) {
-            console.log("Listening to port " + config.port);
+            logger.info("Listening to port " + config.port);
         } else {
-            console.log("Failed to listen to port " + config.port);
+            logger.info("Failed to listen to port " + config.port);
         }
     });
