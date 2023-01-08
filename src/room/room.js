@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import { room }  from "../utils/db.js";
 
 /**
+ * 检查房间 id 是否存在
  * @param {Room[]} data
  * @param {string} id
  * @return {boolean}
@@ -9,13 +10,14 @@ import { room }  from "../utils/db.js";
 const idExist = (data, id) => data.findIndex(v => v.id === id) >= 0;
 
 /**
+ * 检查房间名字是否已存在
  * @param {Room[]} data
  * @param {string} name
  */
 const nameExist = (data, name) => data.findIndex(v => v.name === name) >= 0;
 
 /**
- *
+ * 创建房间
  * @param {string} name
  * @param {string} parent parent room id
  * @return {Promise <boolean | Error<string>>}
@@ -41,7 +43,7 @@ export async function create(name, parent = "") {
 }
 
 /**
- *
+ * 删除房间
  * @param {string}id
  * @return {Promise<Error | boolean>}
  */
@@ -64,7 +66,7 @@ export async function remove(id) {
 }
 
 /**
- * add a sub room
+ * 创建子房间
  * @param {string} id
  * @param {string} sub_id
  * @return {Promise<boolean | Error<string>>}
@@ -82,7 +84,7 @@ export async function addSub(id, sub_id) {
 }
 
 /**
- * add a sub room
+ * 循环删除子房间
  * @param {string} id
  * @param {string} sub_id
  * @return {Promise<boolean | Error<string>>}

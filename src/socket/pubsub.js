@@ -5,7 +5,7 @@ import Log from "../utils/logger.js";
 const logger = Log("socket");
 
 /**
- *
+ * 查询房间是否存在
  * @param {String} id
  * @param {Room[]} data
  * @return {Boolean}
@@ -13,7 +13,7 @@ const logger = Log("socket");
 const room_exist = (id, data) => data.findIndex(v => v.id === id) >= 0 ;
 
 /**
- * handler for all type of message
+ * 总消息处理
  * @param {String | ArrayBuffer} msg
  * @param {WS} ws
  */
@@ -46,7 +46,7 @@ export async function handler(msg, ws) {
 }
 
 /**
- * handle client pub
+ * 处理客户端发送消息
  * @param {Message} msg,
  * @param {WS} ws
  */
@@ -56,7 +56,7 @@ async function pub(msg, ws) {
 }
 
 /**
- * handle client sub
+ * 处理客户端进入房间
  * @param {Message} msg
  * @param {WS} ws
  */
@@ -87,7 +87,7 @@ async function sub(msg, ws) {
 }
 
 /**
- * handle client unsub
+ * 处理客户端退出房间
  * @param {Message} msg
  * @param {WS} ws
  * @return {Promise<void>}
@@ -122,7 +122,7 @@ async function unsub(msg, ws) {
 }
 
 /**
- * handle heart beat
+ * 处理客户端发送心跳包
  * @param {Message} msg
  * @param {WS} ws
  */
@@ -147,7 +147,7 @@ async function heart_beat(msg, ws) {
 }
 
 /**
- * boardcast
+ * 消息广播
  * @param {string} name
  * @param {string} msg,
  * @param {string} room_id,
@@ -183,6 +183,11 @@ async function boardcast(name, msg, room_id, ws) {
     }
 }
 
+/**
+ * 服务器消息广播
+ * @param msg
+ * @return {Promise<void>}
+ */
 async function server_boardcast(msg) {
     await user.read();
     /** @type {User} */
@@ -200,6 +205,10 @@ async function server_boardcast(msg) {
         // the ws param only use if room id not exist
         // but here we assume the room id always exist
         // cause it use the user db
+        // 通过 pub 方法来调用广播
+        // 由于房间的检查并向客户端返回错误消息仅在房间不存在的情况下
+        // 这里我们通过已有的房间列表鸟发送
+        // 所以不存在房间不存在的问题，因此也不用传递ws链接参数
         await pub(send_message, null);
     }
 }
